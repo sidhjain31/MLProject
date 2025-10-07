@@ -1,0 +1,2 @@
+[2025-10-07 11:04:14,792] INFO - Divide by Zero Error caught
+[2025-10-07 11:04:14,793] ERROR - Error occurred in python script [C:\Users\laptop\OneDrive\Desktop\MLproject\src\exception.py] line number [47] error message [division by zero]
