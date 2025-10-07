@@ -1,5 +1,5 @@
 import sys
-import logging
+from src.logger import logging
 
 # configure logging (so info messages actually get printed to a log file or console)
 logging.basicConfig(
@@ -42,11 +42,4 @@ class CustomException(Exception):
         return self.error_message
 
 
-if __name__ == "__main__":
-    try:
-        a = 1 / 0    # this will raise ZeroDivisionError
-    except Exception as e:
-        logging.info("Divide by Zero Error caught")
-        custom_error = CustomException(e, sys)
-        logging.error(custom_error)
-        print("Something went wrong, please check the log file.")
+
