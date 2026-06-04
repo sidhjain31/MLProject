@@ -14,7 +14,7 @@ def save_object(file_path, obj):
 
         with open(file_path, "wb") as file_obj:
             dill.dump(obj, file_obj)
-        logging.info(f"✅ Object saved successfully at {file_path}")
+        logging.info(f"Object saved successfully at {file_path}")
 
     except Exception as e:
         raise CustomException(e, sys)
@@ -29,11 +29,11 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, params):
 
             param_grid = params.get(model_name, {})
 
-            # ✅ If hyperparameters exist → perform tuning
             if len(param_grid) > 0:
                 gs = GridSearchCV(model, param_grid, cv=3, n_jobs=-1, verbose=1)
                 gs.fit(X_train, y_train)
                 best_model = gs.best_estimator_  # already fitted
+                models[model_name] = best_model
             else:
                 model.fit(X_train, y_train)
                 best_model = model
@@ -46,7 +46,7 @@ def evaluate_models(X_train, y_train, X_test, y_test, models, params):
 
             report[model_name] = test_score
 
-            logging.info(f"{model_name} - Train R²: {train_score:.3f}, Test R²: {test_score:.3f}")
+            logging.info(f"{model_name} - Train R2: {train_score:.3f}, Test R2: {test_score:.3f}")
 
         return report
 

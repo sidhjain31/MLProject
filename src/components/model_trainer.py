@@ -1,6 +1,7 @@
 import sys
 import os
 from dataclasses import dataclass
+from pathlib import Path
 
 from catboost import CatBoostRegressor
 from xgboost import XGBRegressor
@@ -15,9 +16,12 @@ from src.logger import logging
 from src.utils import save_object, evaluate_models
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
 @dataclass
 class ModelTrainerConfig:
-    trained_model_file_path = os.path.join("artifacts", "model.pkl")
+    trained_model_file_path = str(PROJECT_ROOT / "artifacts" / "model.pkl")
 
 
 class ModelTrainer:
@@ -35,7 +39,6 @@ class ModelTrainer:
                 test_arr[:, -1]
             )
 
-            # ✅ Model dictionary
             models = {
                 "Random Forest": RandomForestRegressor(),
                 "Decision Tree": DecisionTreeRegressor(),
@@ -47,7 +50,6 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor(),
             }
 
-            # ✅ Simplified parameter grid for tuning
             params = {
                 "Decision Tree": {
                     "criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"]
@@ -90,24 +92,23 @@ class ModelTrainer:
                 params=params
             )
 
-            # ✅ Get best model
             best_model_score = max(model_report.values())
             best_model_name = [name for name, score in model_report.items() if score == best_model_score][0]
             best_model = models[best_model_name]
 
             if best_model_score < 0.6:
-                raise CustomException("No suitable model found with R² >= 0.6")
+                raise CustomException("No suitable model found with R2 >= 0.6")
 
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=best_model
             )
 
-            logging.info(f"✅ Best model: {best_model_name} | R²: {best_model_score:.4f}")
+            logging.info(f"Best model: {best_model_name} | R2: {best_model_score:.4f}")
 
             predicted = best_model.predict(X_test)
             r2 = r2_score(y_test, predicted)
-            print(f"\n✅ Final R² Score of Best Model ({best_model_name}): {r2:.4f}\n")
+            print(f"\nFinal R2 Score of Best Model ({best_model_name}): {r2:.4f}\n")
 
             return r2
 
